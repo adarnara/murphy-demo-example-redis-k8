@@ -42,3 +42,16 @@ Test by running `kubectl get pods`, both mysql pods should be in `RUNNING` state
    1. `kubectl exec -it <redis-pod-name> -- redis-cli`
    2. `GET accessCount:anteater`
    3. `KEYS session:*`
+## Testing
+In three different terminal command lines, ssh into your k8-admin instance. After doing so, run the following commands, each in different terminal sessions:
+
+Viewing Redis Updates:
+`kubectl exec -it "$(kubectl get pod -l app=murphy-redis -o jsonpath='{.items[0].metadata.name}')" -- redis-cli MONITOR | rg '"(GET|SET|INCR)"'`
+
+Viewing Star 1:
+`kubectl logs -f <murphy-star-pod-1-name> | rg "LoginTimeStamp|accessCount"`
+
+Viewing Star 2:
+`kubectl logs -f <murphy-star-pod-2-name> | rg "LoginTimeStamp|accessCount"`
+
+You will see value accessCount increase once you log in and it increment each time you reload the page.
